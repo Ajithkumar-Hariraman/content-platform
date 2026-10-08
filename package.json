@@ -1,0 +1,43 @@
+{
+  "name": "cloudops-content-platform",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "typecheck": "npm run typecheck --workspaces",
+    "lint": "eslint .",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "db:up": "docker compose --env-file .env up -d --wait --wait-timeout 60 postgres",
+    "db:down": "docker compose --env-file .env down",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:migrate": "npm run db:migrate -w server",
+    "db:seed": "npm run db:seed -w server",
+    "db:check": "npm run db:check -w server",
+    "test:unit": "npm run test:unit -w server",
+    "db:doctor": "npm run db:doctor -w server",
+    "dynamodb:up": "docker compose --env-file .env up -d dynamodb",
+    "dynamodb:init": "npm run dynamodb:init -w server",
+    "dynamodb:check": "npm run dynamodb:check -w server",
+    "worker:outbox": "npm run worker:outbox -w server",
+    "redis:up": "docker compose --env-file .env up -d --wait --wait-timeout 60 redis",
+    "db:seed:performance": "npm run db:seed:performance -w server",
+    "db:explain": "npm run db:explain -w server",
+    "test:client": "npm run test -w client"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.0",
+    "@eslint/js": "^9.39.0",
+    "typescript-eslint": "^8.46.0",
+    "globals": "^17.11.0",
+    "prettier": "^3.9.6"
+  },
+  "engines": {
+    "node": ">=24 <25",
+    "npm": ">=11 <12"
+  }
+}

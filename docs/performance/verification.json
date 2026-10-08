@@ -1,0 +1,62 @@
+{
+  "recordedAt": "2026-10-07T16:25:05.969454+00:00",
+  "benchmarkStatus": "NOT_RUN",
+  "reason": "Runtime and dependency restrictions; no HTTP performance values or query plans measured",
+  "commands": [
+    {
+      "command": "npm run db:up",
+      "exitCode": 1,
+      "output": "\n> db:up\n> docker compose --env-file .env up -d --wait --wait-timeout 60 postgres\n\nunable to get image 'postgres:17-alpine': permission denied while trying to connect to the docker API at unix:///var/run/docker.sock\n"
+    },
+    {
+      "command": "npm run redis:up",
+      "exitCode": 1,
+      "output": "\n> redis:up\n> docker compose --env-file .env up -d --wait --wait-timeout 60 redis\n\nunable to get image 'redis:7.4-alpine': permission denied while trying to connect to the docker API at unix:///var/run/docker.sock\n"
+    },
+    {
+      "command": "npm run db:doctor",
+      "exitCode": 1,
+      "output": "\n> db:doctor\n> npm run db:doctor -w server\n\n\n> db:doctor\n> node --env-file=../.env --import tsx src/database/doctor.ts\n\n{\"host\":\"127.0.0.1\",\"port\":55433,\"tcp\":false,\"authenticated\":false}\nPostgreSQL unavailable or authentication failed. Check project .env and run npm run db:up, then npm run db:doctor.\nnpm error Lifecycle script `db:doctor` failed with error:\nnpm error code 1\nnpm error path /home/ak_soft_2017/projects/content-platform/server\nnpm error workspace @cloudops/server\nnpm error location /home/ak_soft_2017/projects/content-platform/server\nnpm error command failed\nnpm error command sh -c node --env-file=../.env --import tsx src/database/doctor.ts\n"
+    },
+    {
+      "command": "npm run db:migrate",
+      "exitCode": 1,
+      "output": "\n> db:migrate\n> npm run db:migrate -w server\n\n\n> db:migrate\n> node --env-file=../.env --import tsx src/database/migrate.ts\n\n/home/ak_soft_2017/projects/content-platform/server/src/database/cli.ts:18\n      throw new Error(\n            ^\n\nError: PostgreSQL unavailable or authentication failed. Run npm run db:doctor and check the project database on 127.0.0.1:55433.\n    at withDatabase (/home/ak_soft_2017/projects/content-platform/server/src/database/cli.ts:18:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async <anonymous> (/home/ak_soft_2017/projects/content-platform/server/src/database/migrate.ts:3:1)\n\nNode.js v24.18.0\nnpm error Lifecycle script `db:migrate` failed with error:\nnpm error code 1\nnpm error path /home/ak_soft_2017/projects/content-platform/server\nnpm error workspace @cloudops/server\nnpm error location /home/ak_soft_2017/projects/content-platform/server\nnpm error command failed\nnpm error command sh -c node --env-file=../.env --import tsx src/database/migrate.ts\n"
+    },
+    {
+      "command": "npm run db:seed:performance",
+      "exitCode": 1,
+      "output": "\n> db:seed:performance\n> npm run db:seed:performance -w server\n\n\n> db:seed:performance\n> node --env-file=../.env --import tsx src/performance/seed.ts\n\n/home/ak_soft_2017/projects/content-platform/server/src/database/cli.ts:18\n      throw new Error(\n            ^\n\nError: PostgreSQL unavailable or authentication failed. Run npm run db:doctor and check the project database on 127.0.0.1:55433.\n    at withDatabase (/home/ak_soft_2017/projects/content-platform/server/src/database/cli.ts:18:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async <anonymous> (/home/ak_soft_2017/projects/content-platform/server/src/performance/seed.ts:4:1)\n\nNode.js v24.18.0\nnpm error Lifecycle script `db:seed:performance` failed with error:\nnpm error code 1\nnpm error path /home/ak_soft_2017/projects/content-platform/server\nnpm error workspace @cloudops/server\nnpm error location /home/ak_soft_2017/projects/content-platform/server\nnpm error command failed\nnpm error command sh -c node --env-file=../.env --import tsx src/performance/seed.ts\n"
+    },
+    {
+      "command": "npm run db:explain",
+      "exitCode": 1,
+      "output": "\n> db:explain\n> npm run db:explain -w server\n\n\n> db:explain\n> node --env-file=../.env --import tsx src/performance/explain.ts\n\n/home/ak_soft_2017/projects/content-platform/server/src/database/cli.ts:18\n      throw new Error(\n            ^\n\nError: PostgreSQL unavailable or authentication failed. Run npm run db:doctor and check the project database on 127.0.0.1:55433.\n    at withDatabase (/home/ak_soft_2017/projects/content-platform/server/src/database/cli.ts:18:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async <anonymous> (/home/ak_soft_2017/projects/content-platform/server/src/performance/explain.ts:7:1)\n\nNode.js v24.18.0\nnpm error Lifecycle script `db:explain` failed with error:\nnpm error code 1\nnpm error path /home/ak_soft_2017/projects/content-platform/server\nnpm error workspace @cloudops/server\nnpm error location /home/ak_soft_2017/projects/content-platform/server\nnpm error command failed\nnpm error command sh -c node --env-file=../.env --import tsx src/performance/explain.ts\n"
+    },
+    {
+      "command": "k6 run load-tests/smoke.js",
+      "exitCode": null,
+      "error": "[Errno 2] No such file or directory: 'k6'"
+    }
+  ],
+  "checks": {
+    "focusedSocketFreeSuite": {
+      "passed": 73,
+      "failed": 0,
+      "skippedDatabaseIntegrationTests": 2
+    },
+    "frontendQueryKeyTests": {
+      "passed": 2,
+      "failed": 0
+    },
+    "format": "passed",
+    "formatCheck": "passed",
+    "lint": "passed",
+    "typecheck": "blocked: missing declared dependencies",
+    "build": "blocked: missing declared dependencies",
+    "fullTests": "failed to load dependency-dependent test files",
+    "reactTests": "blocked: vitest executable missing",
+    "dependencyInstall": "failed: EAI_AGAIN registry.npmjs.org; package-lock regeneration unavailable"
+  },
+  "queryOptimization": "Pending real EXPLAIN evidence; existing query plans/indexes preserved, NOT MATERIALIZED candidate available for evaluation"
+}

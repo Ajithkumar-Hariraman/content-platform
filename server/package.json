@@ -1,0 +1,45 @@
+{
+  "name": "@cloudops/server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=../.env --import tsx --watch src/server.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node --env-file=../.env dist/server.js",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "db:migrate": "node --env-file=../.env --import tsx src/database/migrate.ts",
+    "db:seed": "node --env-file=../.env --import tsx src/database/seed.ts",
+    "db:check": "node --env-file=../.env --import tsx src/database/check.ts",
+    "test:unit": "node --import tsx --test tests/config.test.ts tests/validation.test.ts tests/product-service.test.ts tests/product-repository.test.ts tests/transaction.test.ts tests/migrations.test.ts tests/content-service.test.ts tests/content-validation.test.ts tests/content-repository.test.ts tests/health-controller.test.ts tests/logging.test.ts tests/outbox-mutations.test.ts tests/outbox-worker.test.ts tests/activity-validation.test.ts tests/activity-controller.test.ts tests/activity-repository.test.ts tests/auth-service.test.ts tests/auth-middleware.test.ts tests/user-repository.test.ts tests/auth-validation.test.ts tests/openapi.test.ts tests/cache.test.ts tests/performance-config.test.ts tests/metrics.test.ts tests/query-keys.test.ts",
+    "db:doctor": "node --env-file=../.env --import tsx src/database/doctor.ts",
+    "dynamodb:init": "node --env-file=../.env --import tsx src/dynamodb/init.ts",
+    "dynamodb:check": "node --env-file=../.env --import tsx src/dynamodb/check.ts",
+    "worker:outbox": "node --env-file=../.env --import tsx src/workers/start.ts",
+    "db:seed:performance": "node --env-file=../.env --import tsx src/performance/seed.ts",
+    "db:explain": "node --env-file=../.env --import tsx src/performance/explain.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.1147.0",
+    "@aws-sdk/lib-dynamodb": "^3.1147.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
+    "pg": "^8.16.3",
+    "proxy-addr": "^2.0.8",
+    "redis": "^5.12.1",
+    "zod": "^4.6.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.7.0",
+    "@types/pg": "^8.15.5",
+    "@types/proxy-addr": "^2.0.3",
+    "@types/supertest": "^6.0.3",
+    "supertest": "^7.1.4",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}
