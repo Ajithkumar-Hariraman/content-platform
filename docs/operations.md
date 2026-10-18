@@ -62,3 +62,7 @@ DynamoDB failure does not change PostgreSQL readiness or prevent committed domai
 ## Performance diagnostics
 
 Redis uses project host port 56379 and is optional for readiness. Cache failures log safe operation names and fall back to PostgreSQL. ADMIN-only /api/v1/admin/diagnostics/performance provides process-local metrics and non-secret pool/resource counts. Slow request logs use configurable SLOW_REQUEST_THRESHOLD_MS. PERFORMANCE_MODE is development-only; it never removes authentication controls. See [performance](performance.md).
+
+## Application observability
+
+See [observability](observability.md) for the internal Prometheus listener, optional local Grafana dashboard, OpenTelemetry preload configuration, ECS sidecar boundary and troubleshooting workflow. Request logs now use route templates rather than raw paths and include trace/span IDs when available. Metrics and trace exporter failures do not affect API readiness or normal request handling. Each API/worker process requires its own scrape target; the metrics listener accepts loopback only and must never be added to the public ALB.

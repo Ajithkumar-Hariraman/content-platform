@@ -1,3 +1,5 @@
+import { shutdownTracing } from './observability/tracing.js';
+import { startMetricsServer } from './observability/metrics-server.js';
 import { readPerformanceConfig } from './config/performance.js';
 import { createRedisCache } from './cache/redis.js';
 import { PublicCache } from './cache/public-cache.js';
@@ -19,6 +21,7 @@ import { createApp } from './app.js';
 import { readConfig } from './config/env.js';
 import { createDatabase } from './database/pool.js';
 
+const metricsServer = startMetricsServer();
 const config = readConfig(process.env);
 const database = config.database ? createDatabase(config.database) : undefined;
 const performanceConfig = readPerformanceConfig(process.env);
@@ -87,6 +90,7 @@ let shuttingDown = false;
 function shutdown(signal: string): void {
   if (shuttingDown) return;
   shuttingDown = true;
+  metricsServer?.close();
   console.log(
     JSON.stringify({ level: 'info', event: 'shutdown_started', signal }),
   );
@@ -103,6 +107,7 @@ function shutdown(signal: string): void {
       try {
         if (error) throw error;
         await database?.close();
+        await shutdownTracing();
         activity.close();
         redis?.close();
         clearTimeout(deadline);

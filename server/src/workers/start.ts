@@ -1,3 +1,5 @@
+import { shutdownTracing } from '../observability/tracing.js';
+import { startMetricsServer } from '../observability/metrics-server.js';
 import { setTimeout } from 'node:timers/promises';
 import { readConfig } from '../config/env.js';
 import { readEventConfig } from '../config/events.js';
@@ -6,6 +8,7 @@ import { createActivityDatabase } from '../dynamodb/client.js';
 import { ActivityRepository } from '../repositories/activity-repository.js';
 import { OutboxRepository } from '../repositories/outbox-repository.js';
 import { OutboxWorker } from './outbox-worker.js';
+const metricsServer = startMetricsServer();
 const config = readConfig(process.env);
 if (!config.database)
   throw new Error('Database configuration is required for the outbox worker');
@@ -61,8 +64,10 @@ try {
       }
   }
 } finally {
+  metricsServer?.close();
   activity.close();
   await database.close();
+  await shutdownTracing();
   process.removeListener('SIGTERM', onTerm);
   process.removeListener('SIGINT', onInt);
   console.log(

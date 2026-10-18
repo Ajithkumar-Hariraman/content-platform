@@ -45,4 +45,11 @@ test('database instrumentation measures success/failure and callbacks without lo
     before + 3,
   );
   assert.ok(!JSON.stringify(metrics.snapshot()).includes('secret'));
+  const output = await metrics.registry.metrics();
+  assert.match(
+    output,
+    /database_query_duration_seconds_count\{operation="SELECT"\}/,
+  );
+  assert.ok(!output.includes('secret'));
+  assert.ok(!output.includes('SELECT $1'));
 });

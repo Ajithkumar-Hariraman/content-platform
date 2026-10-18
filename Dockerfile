@@ -31,4 +31,4 @@ COPY server/migrations ./server/migrations
 USER node
 EXPOSE 3000
 STOPSIGNAL SIGTERM
-CMD ["node", "server/dist/server.js"]
+CMD ["node", "--import", "./server/dist/observability/preload.js", "server/dist/server.js"]

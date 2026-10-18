@@ -22,10 +22,11 @@ export function instrumentClient(client: PoolClient) {
     const finish = () => {
       if (!recorded) {
         recorded = true;
-        metrics.observe(
-          `database_query_duration_ms:${operation}`,
-          performance.now() - start,
-        );
+        const duration = performance.now() - start;
+        const threshold = Number(process.env.SLOW_QUERY_THRESHOLD_MS ?? 250);
+        if (duration >= threshold)
+          metrics.increment('database_slow_queries_total');
+        metrics.observe(`database_query_duration_ms:${operation}`, duration);
       }
     };
     const callback = args.at(-1);

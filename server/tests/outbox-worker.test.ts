@@ -1,3 +1,4 @@
+import { metrics } from '../src/metrics/registry.js';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { Pool } from 'pg';
@@ -57,6 +58,7 @@ function fixture(event: ActivityEvent) {
 test('worker success marks processed; transient failure stays pending and later retry succeeds', async (context) => {
   context.mock.method(console, 'log', () => undefined);
   context.mock.method(console, 'error', () => undefined);
+  const before = metrics.snapshot().counters;
   const event = activityEvent('CONTENT_CREATED', 'CONTENT', id);
   const f = fixture(event);
   let available = false;
@@ -88,6 +90,12 @@ test('worker success marks processed; transient failure stays pending and later 
   assert.equal(f.attempt(), 2);
   assert.equal(f.error(), null);
   assert.deepEqual(deliveries, [event]);
+  for (const key of [
+    'outbox_processed_total',
+    'outbox_failed_total',
+    'outbox_retried_total',
+  ])
+    assert.equal(metrics.snapshot().counters[key], (before[key] ?? 0) + 1);
 });
 test('worker bounds batches and stops before acquiring another event on shutdown', async (context) => {
   context.mock.method(console, 'log', () => undefined);

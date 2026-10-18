@@ -1,3 +1,4 @@
+import { metrics } from '../metrics/registry.js';
 import type { Pool } from 'pg';
 import { inTransaction } from '../database/transaction.js';
 import {
@@ -17,7 +18,9 @@ export class OutboxRepository {
   ): Promise<boolean> {
     const client = await this.pool.connect();
     try {
-      return await inTransaction(client, async () => {
+      let outcomeMetric = '';
+      let retry = false;
+      const found = await inTransaction(client, async () => {
         const result = await client.query<{
           id: string;
           payload: unknown;
@@ -28,6 +31,7 @@ export class OutboxRepository {
         const row = result.rows[0];
         if (!row) return false;
         const attempt = row.attempt_count + 1;
+        retry = attempt > 1;
         const outcome = await deliver({
           id: row.id,
           attempt,
@@ -47,8 +51,16 @@ export class OutboxRepository {
               Math.min(60000, 1000 * 2 ** Math.min(attempt - 1, 6)),
             ],
           );
+        outcomeMetric = outcome.ok
+          ? 'outbox_processed_total'
+          : 'outbox_failed_total';
         return true;
       });
+      if (found) {
+        metrics.increment(outcomeMetric);
+        if (retry) metrics.increment('outbox_retried_total');
+      }
+      return found;
     } finally {
       client.release();
     }
